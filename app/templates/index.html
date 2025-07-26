@@ -1,25 +1,68 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <form action="{{ url_for('main.add') }}" method="POST">
-        <input type="text" name="title" placeholder="Title" required>
-        <input type="text" name="description" placeholder="Description">
-        <button type="submit">Add</button>
-    </form>
-
-    <ul>
-        {% for todo in todo_list %}
-        <li class="{% if todo.complete %}completed{% endif %}">
-            <span>
-                {{ todo.title }} - {{ todo.description }}
-                <small>{{ todo.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
-            </span>
-            <div>
-                <a href="{{ url_for('main.edit', todo_id=todo.id) }}">Edit</a>
-                <a href="{{ url_for('main.update', todo_id=todo.id) }}">Toggle</a>
-                <a href="{{ url_for('main.delete', todo_id=todo.id) }}">Delete</a>
+    <div class="todo-form-container">
+        <form class="todo-form" action="{{ url_for('main.add') }}" method="POST">
+            <div class="form-group">
+                <input type="text" name="title" class="form-input" placeholder="What needs to be done?" required>
+                <span class="input-icon"><i class="fas fa-plus"></i></span>
             </div>
-        </li>
-        {% endfor %}
-    </ul>
+            <div class="form-group">
+                <textarea name="description" class="form-textarea" placeholder="Add details (optional)"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-plus-circle"></i> Add Task
+            </button>
+        </form>
+    </div>
+
+    <div class="todo-list-container">
+        {% if todo_list %}
+            <div class="todo-stats">
+                <span>{{ todo_list|length }} tasks</span>
+                <span>{{ todo_list|selectattr('complete')|list|length }} completed</span>
+            </div>
+
+            <ul class="todo-list">
+                {% for todo in todo_list %}
+                <li class="todo-item {% if todo.complete %}completed{% endif %}">
+                    <div class="todo-checkbox">
+                        <a href="{{ url_for('main.update', todo_id=todo.id) }}" class="checkbox">
+                            {% if todo.complete %}
+                                <i class="fas fa-check-circle"></i>
+                            {% else %}
+                                <i class="far fa-circle"></i>
+                            {% endif %}
+                        </a>
+                    </div>
+                    <div class="todo-content">
+                        <div class="todo-title">{{ todo.title }}</div>
+                        {% if todo.description %}
+                        <div class="todo-description">{{ todo.description }}</div>
+                        {% endif %}
+                        <div class="todo-meta">
+                            <span class="todo-date">
+                                <i class="far fa-clock"></i> {{ todo.created_at.strftime('%b %d, %Y %I:%M %p') }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="todo-actions">
+                        <a href="{{ url_for('main.edit', todo_id=todo.id) }}" class="btn-action edit" title="Edit">
+                            <i class="fas fa-pencil-alt"></i>
+                        </a>
+                        <a href="{{ url_for('main.delete', todo_id=todo.id) }}" class="btn-action delete" title="Delete">
+                            <i class="fas fa-trash-alt"></i>
+                        </a>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <div class="empty-state">
+                <img src="{{ url_for('static', filename='images/empty.svg') }}" alt="No tasks" class="empty-image">
+                <h3>No tasks yet</h3>
+                <p>Add your first task using the form above</p>
+            </div>
+        {% endif %}
+    </div>
 {% endblock %}
