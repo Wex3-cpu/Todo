@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      - DATABASE_URL=postgresql://wex:V4R9lPPj3HGF6u0YuLdwXLRwT0hxQq4C@dpg-d21pau3ipnbc73fp9clg-a.oregon-postgres.render.com/wexoniii
+      - FLASK_APP=run.py
+      - FLASK_ENV=production
+    depends_on:
+      - db
+
+  db:
+    image: postgres:13
+    environment:
+      - POSTGRES_PASSWORD=yourpassword
+      - POSTGRES_USER=wex
+      - POSTGRES_DB=wexoniii
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+
+volumes:
+  postgres_data:

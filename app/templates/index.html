@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <form action="{{ url_for('main.add') }}" method="POST">
+        <input type="text" name="title" placeholder="Title" required>
+        <input type="text" name="description" placeholder="Description">
+        <button type="submit">Add</button>
+    </form>
+
+    <ul>
+        {% for todo in todo_list %}
+        <li class="{% if todo.complete %}completed{% endif %}">
+            <span>
+                {{ todo.title }} - {{ todo.description }}
+                <small>{{ todo.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
+            </span>
+            <div>
+                <a href="{{ url_for('main.edit', todo_id=todo.id) }}">Edit</a>
+                <a href="{{ url_for('main.update', todo_id=todo.id) }}">Toggle</a>
+                <a href="{{ url_for('main.delete', todo_id=todo.id) }}">Delete</a>
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
